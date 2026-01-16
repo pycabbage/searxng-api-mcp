@@ -9,6 +9,7 @@
   "files": [
     "src"
   ],
+  "license": "MIT",
   "author": {
     "name": "Cabbage Lettuce",
     "email": "33714346+pycabbage@users.noreply.github.com",
