@@ -1,21 +1,27 @@
-# searxng-mcp
+# searxng-api-mcp
 
 MCP server for SearXNG web search.
 
 ## Setup
 
-```bash
-bun install
+Add to your MCP client configuration (e.g., `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "searxng": {
+      "command": "bunx",
+      "args": ["searxng-api-mcp@latest"],
+      "env": {
+        "SEARXNG_SERVER": "https://your-searxng-instance.com"
+      }
+    }
+  }
+}
 ```
 
-## Usage
+### Environment Variables
 
-Set environment variables:
-```bash
-SEARXNG_SERVER=https://your-searxng-instance.com
-```
-
-Run:
-```bash
-bun run dev
-```
+- **SEARXNG_SERVER** (required): Your SearXNG instance URL
+- **SEARXNG_API_KEY** (optional): API key for your SearXNG server
+- **SEARXNG_LANGUAGE** (optional): Language code (e.g., `en`, `ja`)
