@@ -25,7 +25,7 @@ export interface CliOptions {
   key?: string
 }
 
-async function cli() {
+export async function cli() {
   const { values } = parseArgs({
     args: Bun.argv.slice(2),
     options: {
@@ -73,8 +73,4 @@ Options:
   }
 
   await startStdioTransport(values as CliOptions)
-}
-
-if (import.meta.main) {
-  await cli()
 }

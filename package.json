@@ -1,10 +1,10 @@
 {
   "name": "searxng-api-mcp",
-  "version": "0.0.0",
-  "module": "src/index.ts",
+  "version": "0.0.0-dev02",
+  "module": "src/cli.ts",
   "type": "module",
   "bin": {
-    "searxng-api-mcp": "src/index.ts"
+    "searxng-api-mcp": "src/cli.ts"
   },
   "files": [
     "src"
@@ -23,7 +23,7 @@
   },
   "scripts": {
     "lint": "biome check",
-    "dev": "bun run src",
+    "dev": "bun run src/cli",
     "inspect:stdio": "bunx @modelcontextprotocol/inspector --transport stdio bun dev"
   },
   "dependencies": {
