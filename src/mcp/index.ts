@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
-import { version } from "../../package.json"
+import { version } from "../../package.json" assert { type: 'json' }
 import "./search"
 import type { CliOptions } from ".."
 import { registerSearchTool } from "./search"

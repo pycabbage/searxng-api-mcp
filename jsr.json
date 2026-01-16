@@ -1,6 +1,10 @@
 {
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
   "name": "@pycabbage/searxng-mcp",
   "version": "0.0.0",
   "license": "MIT",
-  "exports": "./src/index.ts"
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": ["package.json", "src"]
+  }
 }
