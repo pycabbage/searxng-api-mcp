@@ -1,11 +1,11 @@
 {
-  "name": "@pycabbage/searxng-mcp",
-  "version": "0.0.0",
+  "name": "searxng-api-mcp",
+  "version": "0.1.0",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
   "bin": {
-    "searxng-mcp": "src/index.ts"
+    "searxng-api-mcp": "src/index.ts"
   },
   "files": [
     "src"
