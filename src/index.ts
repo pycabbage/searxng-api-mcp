@@ -20,32 +20,59 @@ function isValidUrl(url: string): boolean {
   }
 }
 
+export interface CliOptions {
+  server: string
+  key?: string
+}
+
 async function cli() {
-  const serverFromEnv = Bun.env["SEARXNG_SERVER"]
-  const {
-    values: { server },
-  } = parseArgs({
+  const { values } = parseArgs({
     args: Bun.argv.slice(2),
     options: {
       server: {
         type: "string",
         short: "s",
-        default: serverFromEnv,
+        default: Bun.env["SEARXNG_SERVER"],
       },
+      key: {
+        type: "string",
+        short: "k",
+        default: Bun.env["SEARXNG_API_KEY"],
+      },
+      language: {
+        type: "string",
+        short: "l",
+        default: Bun.env["SEARXNG_LANGUAGE"],
+      },
+      help: {
+        type: "boolean",
+        default: false
+      }
     },
     strict: true,
     allowPositionals: false,
   })
-  if (!server) {
+  if (values.help) {
+    console.log(`Usage: ${Bun.argv[0]} ${Bun.argv[1]} [options]
+
+Options:
+  --server, -s   SearXNG server URL (or SEARXNG_SERVER env variable)
+  --key, -k      API key for the SearXNG server (or SEARXNG_API_KEY env variable)
+  --language, -l Language code for the searches (or SEARXNG_LANGUAGE env variable)
+  --help         Show this help message
+`)
+    return
+  }
+  if (!values.server) {
     throw new Error(
       "The --server option or SEARXNG_SERVER environment variable is required"
     )
   }
-  if (!isValidUrl(server)) {
+  if (!isValidUrl(values.server)) {
     throw new Error("The provided server URL is not valid")
   }
 
-  await startStdioTransport()
+  await startStdioTransport(values as CliOptions)
 }
 
 if (import.meta.main) {

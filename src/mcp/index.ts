@@ -1,24 +1,30 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { version } from "../../package.json"
 import "./search"
+import type { CliOptions } from ".."
 import { registerSearchTool } from "./search"
 
-export const server = new McpServer(
-  {
-    title: "SearXNG MCP Server",
-    name: "SearXNG MCP Server",
-    version,
-    description: `
-The SearXNG MCP Server provides tool to search the web using google, bing, brave, etc.
-`.trim(),
-  },
-  {
-    capabilities: {
-      logging: {},
+export function getServer(options: CliOptions) {
+  const server = new McpServer(
+    {
+      title: "SearXNG MCP Server",
+      name: "SearXNG MCP Server",
+      version,
+      description: `
+  The SearXNG MCP Server provides tool to search the web using google, bing, brave, etc.
+  `.trim(),
     },
-  }
-)
-registerSearchTool(server)
+    {
+      capabilities: {
+        logging: {},
+      },
+    }
+  )
+
+  registerSearchTool(server, options)
+
+  return server
+}
 
 /*
 The GitHub MCP Server provides tools to interact with GitHub platform.
