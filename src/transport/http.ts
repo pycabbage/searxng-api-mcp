@@ -3,10 +3,11 @@ import { Hono } from "hono"
 import type { CliOptions } from ".."
 import { getServer } from "../mcp"
 
+const app = new Hono()
+
 export async function startHttpTransport(options: CliOptions) {
   const mcpServer = getServer(options)
 
-  const app = new Hono()
   app.all("/mcp", async (c) => {
     const transport = new StreamableHTTPTransport()
     await mcpServer.connect(transport)
@@ -17,5 +18,7 @@ export async function startHttpTransport(options: CliOptions) {
     port: Number.parseInt(options.port, 10),
     fetch: app.fetch,
   })
-  Bun.stderr.write(`MCP Server is running over HTTP on port ${httpServer.port}\n`)
+  Bun.stderr.write(
+    `MCP Server is running over HTTP on port ${httpServer.port}\n`
+  )
 }
