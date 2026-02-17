@@ -1,4 +1,5 @@
 import { parseArgs } from "util"
+import { startHttpTransport } from "./transport/http"
 import { startStdioTransport } from "./transport/stdio"
 
 Error.stackTraceLimit = Bun.env["NODE_ENV"] === "development" ? 10 : 0
@@ -23,6 +24,9 @@ function isValidUrl(url: string): boolean {
 export interface CliOptions {
   server: string
   key?: string
+  language?: string
+  transport: "stdio" | "http"
+  port: string
 }
 
 export async function cli() {
@@ -48,6 +52,16 @@ export async function cli() {
         type: "boolean",
         default: false,
       },
+      transport: {
+        type: "string",
+        short: "t",
+        default: Bun.env["SEARXNG_TRANSPORT"] || "stdio",
+      },
+      port: {
+        type: "string",
+        short: "p",
+        default: Bun.env["SEARXNG_PORT"] || "5021",
+      },
     },
     strict: true,
     allowPositionals: false,
@@ -56,10 +70,16 @@ export async function cli() {
     console.log(`Usage: ${Bun.argv[0]} ${Bun.argv[1]} [options]
 
 Options:
-  --server, -s   SearXNG server URL (or SEARXNG_SERVER env variable)
-  --key, -k      API key for the SearXNG server (or SEARXNG_API_KEY env variable)
-  --language, -l Language code for the searches (or SEARXNG_LANGUAGE env variable)
-  --help         Show this help message
+  --server, -s    SearXNG server URL (or SEARXNG_SERVER env variable)
+  --key, -k       API key for the SearXNG server (or SEARXNG_API_KEY env variable)
+  --language, -l  Language code for the searches (or SEARXNG_LANGUAGE env variable)
+  --transport <stdio|http>, -t <stdio|http>
+    Transport method for the MCP server (default: stdio)
+    (or SEARXNG_TRANSPORT env variable)
+  --port <number>, -p <number>
+    Port number for HTTP transport (default: 5021)
+    (or SEARXNG_PORT env variable)
+  --help          Show this help message
 `)
     return
   }
@@ -72,5 +92,10 @@ Options:
     throw new Error("The provided server URL is not valid")
   }
 
-  await startStdioTransport(values as CliOptions)
+  switch (values.transport) {
+    case "stdio":
+      return await startStdioTransport(values as CliOptions)
+    case "http":
+      return await startHttpTransport(values as CliOptions)
+  }
 }
