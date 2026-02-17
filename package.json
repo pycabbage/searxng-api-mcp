@@ -9,6 +9,12 @@
   "files": [
     "src"
   ],
+  "keywords": [
+    "searxng",
+    "mcp",
+    "modelcontextprotocol",
+    "search"
+  ],
   "license": "MIT",
   "author": {
     "name": "Cabbage Lettuce",
@@ -41,6 +47,8 @@
     "typescript": "^5.9.3"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true,
+    "tag": "aaa"
   }
 }

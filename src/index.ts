@@ -1,33 +1,30 @@
 import { parseArgs } from "util"
 import { startHttpTransport } from "./transport/http"
 import { startStdioTransport } from "./transport/stdio"
+import { name, version } from "../package.json"
+import { z } from "zod"
+import { prettifyError } from "zod/v4/core"
 
 Error.stackTraceLimit = Bun.env["NODE_ENV"] === "development" ? 10 : 0
 
-function isValidUrl(url: string): boolean {
-  try {
-    const parsedUrl = new URL(url)
-    if (
-      !["", "/"].includes(parsedUrl.pathname) ||
-      parsedUrl.search !== "" ||
-      parsedUrl.hash !== "" ||
-      !["http:", "https:"].includes(parsedUrl.protocol)
-    ) {
-      return false
-    }
-    return true
-  } catch {
-    return false
-  }
-}
-
-export interface CliOptions {
-  server: string
-  key?: string
-  language?: string
-  transport: "stdio" | "http"
-  port: string
-}
+const zCliOptions = z.object({
+  server: z.url({
+    error({ input }) {
+      return `Invalid URL: "${input}". Please provide a valid SearXNG server URL at \`--server\` or SEARXNG_SERVER environment variable.`
+    },
+  }),
+  key: z.string().min(1).optional(),
+  language: z.string().min(1).optional(),
+  transport: z.enum(["stdio", "http"]),
+  port: z.string()
+    .refine((val) => {
+      const num = Number(val)
+      return !isNaN(num) && num > 0 && num < 65536
+    }),
+  help: z.boolean(),
+  version: z.boolean(),
+})
+export type CliOptions = z.infer<typeof zCliOptions>
 
 export async function cli() {
   const { values } = parseArgs({
@@ -62,11 +59,20 @@ export async function cli() {
         short: "p",
         default: Bun.env["SEARXNG_PORT"] || "5021",
       },
+      version: {
+        type: "boolean",
+        short: "v",
+        default: false,
+      },
     },
     strict: true,
     allowPositionals: false,
   })
-  if (values.help) {
+  const parsedOptions = zCliOptions.safeParse(values)
+  if (!parsedOptions.success) {
+    throw new Error("\n" + prettifyError(parsedOptions.error))
+  }
+  if (parsedOptions.data.help) {
     console.log(`Usage: ${Bun.argv[0]} ${Bun.argv[1]} [options]
 
 Options:
@@ -80,22 +86,20 @@ Options:
     Port number for HTTP transport (default: 5021)
     (or SEARXNG_PORT env variable)
   --help          Show this help message
+  --version, -v   Show version information
 `)
     return
   }
-  if (!values.server) {
-    throw new Error(
-      "The --server option or SEARXNG_SERVER environment variable is required"
-    )
-  }
-  if (!isValidUrl(values.server)) {
-    throw new Error("The provided server URL is not valid")
+
+  if (parsedOptions.data.version) {
+    console.log(name, version)
+    return
   }
 
-  switch (values.transport) {
+  switch (parsedOptions.data.transport) {
     case "stdio":
-      return await startStdioTransport(values as CliOptions)
+      return await startStdioTransport(parsedOptions.data)
     case "http":
-      return await startHttpTransport(values as CliOptions)
+      return await startHttpTransport(parsedOptions.data)
   }
 }
