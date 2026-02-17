@@ -17,7 +17,6 @@ export async function search({ options, args }: SearchOptions) {
   if (options.key) {
     url.searchParams.append("key", options.key)
   }
-  console.debug("[DEBUG] SearXNG search URL:", url.toString())
   const response = await fetch(url)
 
   if (!response.ok) {

@@ -109,10 +109,9 @@ bun run inspect:stdio  # Inspect MCP server with stdio transport
   ```typescript
   // biome-ignore lint/style/noNonNullAssertion: Argument is defined in the schema
   ```
-- Use `console.debug()` for debug logging with descriptive prefixes:
-  ```typescript
-  console.debug("[DEBUG] SearXNG search URL:", url.toString())
-  ```
+- DO NOT use `console.***()`:
+  - Use `throw new Error()` for error conditions
+  - Use return values for status reporting in validation functions
 - Document function parameters and return types with TypeScript
 - Use JSDoc for complex functions if needed
 
