@@ -26,8 +26,6 @@ jobs:
         run: bun lint
       - name: Typecheck
         run: bun tsc --noEmit
-      - name: Lint
-        run: bun lint
 
   publish:
     name: Publish package
