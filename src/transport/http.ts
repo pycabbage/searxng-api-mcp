@@ -6,13 +6,23 @@ import { getServer } from "../mcp"
 const app = new Hono()
 
 export async function startHttpTransport(options: CliOptions) {
-  const mcpServer = getServer(options)
-
   app.all("/mcp", async (c) => {
+    const headers = {
+      server: c.req.header("searxng-server") || options.server,
+      key: c.req.header("searxng-key") || options.key,
+    }
+    const mcpServer = getServer({
+      ...options,
+      ...headers,
+    })
     const transport = new StreamableHTTPTransport()
     await mcpServer.connect(transport)
     return transport.handleRequest(c)
   })
+
+  app.all("/health", (c) => c.json({
+    status: "ok",
+  }))
 
   const httpServer = Bun.serve({
     port: Number.parseInt(options.port, 10),
