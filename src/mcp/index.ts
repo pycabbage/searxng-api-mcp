@@ -9,9 +9,17 @@ export function getServer(options: CliOptions) {
       title: "SearXNG MCP Server",
       name: "SearXNG MCP Server",
       version,
-      description: `
-  The SearXNG MCP Server provides tool to search the web using google, bing, brave, etc.
-  `.trim(),
+      description:
+        "The SearXNG MCP Server provides tool to search the web using google, bing, brave, etc.",
+      websiteUrl: "https://github.com/pycabbage/searxng-api-mcp",
+      icons: [
+        {
+          src: "https://avatars.githubusercontent.com/u/80454229?s=200&v=4",
+          mimeType: "image/png",
+          sizes: ["200x200"],
+          theme: "light",
+        },
+      ],
     },
     {
       capabilities: {

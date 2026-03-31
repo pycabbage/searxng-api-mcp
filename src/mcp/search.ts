@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import type { CliOptions } from ".."
 import { search } from "../searxng"
-import { inputSchema, outputSchema } from "./types"
+import { searchInputSchema, searchOutputSchema } from "./types"
 
 export function registerSearchTool(server: McpServer, options: CliOptions) {
   server.registerTool(
@@ -9,12 +9,19 @@ export function registerSearchTool(server: McpServer, options: CliOptions) {
     {
       title: "Search the web",
       description: "Search the web using SearXNG search engine",
-      inputSchema,
-      outputSchema,
+      inputSchema: searchInputSchema,
+      outputSchema: searchOutputSchema,
+      annotations: {
+        title: "Search the web",
+        readOnlyHint: true,
+        openWorldHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+      },
     },
     async (args) => {
       const searchResult = await search({ options, args })
-      const structuredContent = outputSchema.parse(searchResult.response)
+      const structuredContent = searchOutputSchema.parse(searchResult.response)
 
       return {
         isError: false,

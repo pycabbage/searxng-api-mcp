@@ -1,6 +1,6 @@
 import z from "zod"
 
-export const inputSchema = z.object({
+export const searchInputSchema = z.object({
   query: z
     .string()
     .min(1)
@@ -35,7 +35,7 @@ export const inputSchema = z.object({
     ),
 })
 
-export const outputSchema = z.object({
+export const searchOutputSchema = z.object({
   query: z.string().describe("The search query that was executed."),
   number_of_results: z.number().describe("Total number of results returned."),
   results: z
@@ -72,7 +72,7 @@ export const outputSchema = z.object({
           infobox: z.string(),
           id: z.string(),
           content: z.string(),
-          img_src: z.string(),
+          img_src: z.string().nullable(),
           urls: z.array(
             z.object({
               title: z.string(),
@@ -109,3 +109,55 @@ export const outputSchema = z.object({
     .array(z.tuple([z.string(), z.string()]))
     .describe("Engines that failed to respond with their error messages."),
 })
+
+export const autocompleteInputSchema = z.object({
+  query: z
+    .string()
+    .min(1)
+    .describe("The partial query for which the completion is requested."),
+  provider: z
+    .enum([
+      "360search",
+      "baidu",
+      "brave",
+      "dbpedia",
+      "duckduckgo",
+      "google",
+      "mwmbl",
+      "naver",
+      "quark",
+      "qwant",
+      "seznam",
+      "sogou",
+      "startpage",
+      "stract",
+      "swisscows",
+      "wikipedia",
+      "yandex",
+    ])
+    .default("google")
+    .optional()
+    .describe(
+      "The search engine for which the completion is requested. If not specified, the default autocomplete provider of the SearXNG instance will be used."
+    ),
+  categories: z
+    .string()
+    .default("general")
+    .optional()
+    .describe(
+      "Comma separated list, specifies the active search categories. Default: general"
+    ),
+})
+
+export const autocompleteOutputSchema = z.tuple([
+  z
+    .string()
+    .describe(
+      "The original input query for which autocomplete suggestions are generated."
+    ),
+  z
+    .array(z.string())
+    .describe(
+      "An array of autocomplete suggestions based on the input query. Each suggestion is a string that represents a possible completion or extension of the original query."
+    ),
+])

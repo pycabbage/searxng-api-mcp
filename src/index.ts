@@ -1,9 +1,9 @@
 import { parseArgs } from "util"
-import { startHttpTransport } from "./transport/http"
-import { startStdioTransport } from "./transport/stdio"
-import { name, version } from "../package.json"
 import { z } from "zod"
 import { prettifyError } from "zod/v4/core"
+import { name, version } from "../package.json"
+import { startHttpTransport } from "./transport/http"
+import { startStdioTransport } from "./transport/stdio"
 
 Error.stackTraceLimit = Bun.env["NODE_ENV"] === "development" ? 10 : 0
 
@@ -16,11 +16,10 @@ const zCliOptions = z.object({
   key: z.string().min(1).optional(),
   language: z.string().min(1).optional(),
   transport: z.enum(["stdio", "http"]),
-  port: z.string()
-    .refine((val) => {
-      const num = Number(val)
-      return !isNaN(num) && num > 0 && num < 65536
-    }),
+  port: z.string().refine((val) => {
+    const num = Number(val)
+    return !Number.isNaN(num) && num > 0 && num < 65536
+  }),
   help: z.boolean(),
   version: z.boolean(),
 })
@@ -45,10 +44,6 @@ export async function cli() {
         short: "l",
         default: Bun.env["SEARXNG_LANGUAGE"],
       },
-      help: {
-        type: "boolean",
-        default: false,
-      },
       transport: {
         type: "string",
         short: "t",
@@ -58,6 +53,10 @@ export async function cli() {
         type: "string",
         short: "p",
         default: Bun.env["SEARXNG_PORT"] || "5021",
+      },
+      help: {
+        type: "boolean",
+        default: false,
       },
       version: {
         type: "boolean",
@@ -69,10 +68,7 @@ export async function cli() {
     allowPositionals: false,
   })
   const parsedOptions = zCliOptions.safeParse(values)
-  if (!parsedOptions.success) {
-    throw new Error("\n" + prettifyError(parsedOptions.error))
-  }
-  if (parsedOptions.data.help) {
+  if (values.help) {
     console.log(`Usage: ${Bun.argv[0]} ${Bun.argv[1]} [options]
 
 Options:
@@ -91,9 +87,13 @@ Options:
     return
   }
 
-  if (parsedOptions.data.version) {
+  if (values.version) {
     console.log(name, version)
     return
+  }
+
+  if (!parsedOptions.success) {
+    throw new Error(`\n${prettifyError(parsedOptions.error)}`)
   }
 
   switch (parsedOptions.data.transport) {
