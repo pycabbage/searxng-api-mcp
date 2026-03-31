@@ -44,11 +44,11 @@
     "@types/bun": "1.3.11"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "publishConfig": {
     "access": "public",
     "provenance": true,
-    "tag": "aaa"
+    "tag": "latest"
   }
 }
