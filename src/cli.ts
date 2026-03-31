@@ -3,5 +3,5 @@
 import { cli } from "."
 
 if (import.meta.main) {
-  await cli()
+  cli()
 }

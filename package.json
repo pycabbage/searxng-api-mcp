@@ -34,14 +34,14 @@
     "inspect:stdio": "bunx @modelcontextprotocol/inspector --transport stdio bun dev"
   },
   "dependencies": {
-    "@hono/mcp": "^0.2.4",
+    "@hono/mcp": "^0.2.5",
     "@modelcontextprotocol/sdk": "^1.27.1",
-    "hono": "^4.12.3",
+    "hono": "^4.12.9",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
-    "@types/bun": "1.3.9"
+    "@biomejs/biome": "2.4.10",
+    "@types/bun": "1.3.11"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
