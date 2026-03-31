@@ -20,9 +20,11 @@ export async function startHttpTransport(options: CliOptions) {
     return transport.handleRequest(c)
   })
 
-  app.all("/health", (c) => c.json({
-    status: "ok",
-  }))
+  app.all("/health", (c) =>
+    c.json({
+      status: "ok",
+    })
+  )
 
   const httpServer = Bun.serve({
     port: Number.parseInt(options.port, 10),
