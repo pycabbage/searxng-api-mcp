@@ -1,4 +1,4 @@
-FROM oven/bun:1.3.11-alpine AS builder
+FROM oven/bun:1.3.12-alpine AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN \
   --compile \
   ./src/cli.ts --outfile=./dist/cli
 
-FROM oven/bun:1.3.11-alpine AS runner
+FROM oven/bun:1.3.12-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/dist/cli /app/cli
 CMD ["./cli"]
